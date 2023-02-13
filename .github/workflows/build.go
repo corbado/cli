@@ -82,11 +82,20 @@ func build(goos string, goarch string) error {
 }
 
 func compress(tag string, goos string, goarch string) error {
+	output := "tar.gz"
+
 	if goos == "darwin" {
 		goos = "macos"
+	} else if goos == "windows" {
+		output = "zip"
 	}
 
-	cmd := exec.Command("tar", "czf", fmt.Sprintf("dist/corbado_cli_%s_%s_%s.tar.gz", tag, goos, goarch), "corbado")
+	var cmd *exec.Cmd
+	if output == "tar.gz" {
+		cmd = exec.Command("tar", "czf", fmt.Sprintf("dist/corbado_cli_%s_%s_%s.tar.gz", tag, goos, goarch), "corbado")
+	} else {
+		cmd = exec.Command("zip", fmt.Sprintf("dist/corbado_cli_%s_%s_%s.zip", tag, goos, goarch), "corbado")
+	}
 
 	var stdoutBuffer, stderrBuffer bytes.Buffer
 	cmd.Stdout = &stdoutBuffer
