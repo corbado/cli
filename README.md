@@ -5,8 +5,8 @@ The Corbado CLI (command line interface) is a tool which you can run locally on 
 See our [official documentation](https://docs.corbado.com/helpful-guides/corbado-cli) for more details.
 
 ## Prerequisites
-
-For most commands you need a projectID and cliSecret to authenticate. You can find both in our [developer panel](https://app.corbado.com/app/settings/credentials#cli). We offer multiple authentication methods which are explained in our [documentation](https://docs.corbado.com/helpful-guides/corbado-cli#authentication).
+-secret
+For most commands you need a projectID and cliSecret to authenticate. You can find both in our [developer panel](https://app.corbado.com/app/settings/credentials/cli-secret). We offer multiple authentication methods which are explained in our [documentation](https://docs.corbado.com/helpful-guides/corbado-cli#authentication).
 
 ## Installation
 
