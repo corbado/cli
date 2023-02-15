@@ -18,48 +18,55 @@ func main() {
 	}
 
 	targets := []struct {
-		goos   string
-		goarch string
+		goos          string
+		goarch        string
+		fileExtension string
 	}{
 		{
-			goos:   "linux",
-			goarch: "amd64",
+			goos:          "linux",
+			goarch:        "amd64",
+			fileExtension: "",
 		},
 		{
-			goos:   "linux",
-			goarch: "arm64",
+			goos:          "linux",
+			goarch:        "arm64",
+			fileExtension: "",
 		},
 		{
-			goos:   "darwin",
-			goarch: "amd64",
+			goos:          "darwin",
+			goarch:        "amd64",
+			fileExtension: "",
 		},
 		{
-			goos:   "darwin",
-			goarch: "arm64",
+			goos:          "darwin",
+			goarch:        "arm64",
+			fileExtension: "",
 		},
 		{
-			goos:   "windows",
-			goarch: "amd64",
+			goos:          "windows",
+			goarch:        "amd64",
+			fileExtension: ".exe",
 		},
 		{
-			goos:   "windows",
-			goarch: "arm64",
+			goos:          "windows",
+			goarch:        "arm64",
+			fileExtension: ".exe",
 		},
 	}
 
 	for _, target := range targets {
-		if err := build(target.goos, target.goarch); err != nil {
+		if err := build(target.goos, target.goarch, target.fileExtension); err != nil {
 			log.Fatalf("%+v", err)
 		}
 
-		if err := compress(tag, target.goos, target.goarch); err != nil {
+		if err := compress(tag, target.goos, target.goarch, target.fileExtension); err != nil {
 			log.Fatalf("%+v", err)
 		}
 	}
 }
 
-func build(goos string, goarch string) error {
-	cmd := exec.Command("go", "build", "-buildmode", "exe", "-o", "corbado", "./cmd/corbado")
+func build(goos string, goarch string, fileExtension string) error {
+	cmd := exec.Command("go", "build", "-buildmode", "exe", "-o", fmt.Sprintf("corbado%s", fileExtension), "./cmd/corbado")
 	cmd.Env = []string{
 		// Not inherited from calling environment, no idea why
 		fmt.Sprintf("%s=%s", "GOMODCACHE", "/tmp"),
@@ -81,7 +88,7 @@ func build(goos string, goarch string) error {
 	return nil
 }
 
-func compress(tag string, goos string, goarch string) error {
+func compress(tag string, goos string, goarch string, fileExtension string) error {
 	output := "tar.gz"
 
 	if goos == "darwin" {
@@ -92,9 +99,9 @@ func compress(tag string, goos string, goarch string) error {
 
 	var cmd *exec.Cmd
 	if output == "tar.gz" {
-		cmd = exec.Command("tar", "czf", fmt.Sprintf("dist/corbado_cli_%s_%s_%s.tar.gz", tag, goos, goarch), "corbado")
+		cmd = exec.Command("tar", "czf", fmt.Sprintf("dist/corbado_cli_%s_%s_%s.tar.gz", tag, goos, goarch), fmt.Sprintf("corbado%s", fileExtension))
 	} else {
-		cmd = exec.Command("zip", fmt.Sprintf("dist/corbado_cli_%s_%s_%s.zip", tag, goos, goarch), "corbado")
+		cmd = exec.Command("zip", fmt.Sprintf("dist/corbado_cli_%s_%s_%s.zip", tag, goos, goarch), fmt.Sprintf("corbado%s", fileExtension))
 	}
 
 	var stdoutBuffer, stderrBuffer bytes.Buffer
